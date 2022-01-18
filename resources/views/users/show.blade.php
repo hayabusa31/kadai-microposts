@@ -9,7 +9,7 @@
                 </div>
                 <div class="card-body">
                     {{-- ユーザのメールアドレスをもとにGravatarを取得して表示 --}}
-                    <img class="rounded img-fluid" src="{{ Gravatar::get($user->email,['size' => 500]) }}" alt="">
+                    <img class="rounded img-fluid" src="{{ Gravatar::get($user->email, ['size' => 500]) }}" alt="">
                 </div>
             </div>
         </aside>
@@ -17,7 +17,7 @@
             <ul class="nav nav-tabs nav-justified mb-3">
                 {{--ユーザ詳細タブ --}}
                 <li class="nav-item">
-                    <a href="{{ route('users.show', ['user' => $user->id]) }}" class="nav-link {{ Request::routeIs('users.show')? 'active' : '' }}">
+                    <a href="{{ route('users.show', ['user' => $user->id]) }}" class="nav-link {{ Request::routeIs('users.show') ? 'active' : '' }}">
                         TimeLine
                         <span class="badge badge-secondary">{{ $user->microposts_count }}</span>
                     </a>
