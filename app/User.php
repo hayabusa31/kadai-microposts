@@ -65,7 +65,7 @@ class User extends Authenticatable
       */
       public function loadRelationshipCounts()
       {
-          $this->loadCount('microposts','followings','followers');
+          $this->loadCount(['microposts','followings','followers']);
       }
       
      /**
@@ -137,4 +137,85 @@ class User extends Authenticatable
              //それらのユーザが所有する投稿に絞り込む
              return Micropost::whereIn('user_id',$userIds);
          }
+         
+         /**
+          * このユーザがお気に入り追加している投稿。
+          */
+          public function addings()
+          {
+              return $this->belongsToMany(User::class, 'favorites','user_id','micropost_id')->withTimestamps();
+          }
+          
+          /**
+           * 投稿がお気に入り追加されているユーザ。
+           */
+           public function added()
+           {
+               return $this->belongsToMany(User::class, 'favorites', 'micropost_id','user_id')->withTimestamps();
+           }
+           
+           /**
+            * $userIdで指定されたユーザをお気に入り追加する。
+            * 
+            * @param int $userId
+            * @return bool
+            */
+            public function add($userId)
+            {
+                //すでにお気に入り追加しているか
+                $exist = $this->is_adding($userId);
+                //対象が自分自身かどうか
+                $its_me = $this->id == $userId;
+                
+                if($exist || $its_me){
+                    //お気に入り追加済み、または、自分自身の場合は何もしない
+                    return false;
+                }else{
+                    //上記以外はお気に入り追加する
+                    $this->addings()->attach($userId);
+                    return true;
+                }
+            }    
+            /**
+             * $userIdで指定されたユーザをお気に入り解除する。
+             * 
+             * @param int $userId
+             * @return bool
+             */
+             public function unadd($userId)
+             {
+                 //すでにお気に入り追加しているか
+                 $exist = $this->is_adding($userId);
+                 //対象が自分自身かどうか
+                 $its_me = $this->id == $userId;
+                 
+                 if($exist && !$its_me){
+                     //お気に入り済み、かつ、自分自身でない場合はお気に入りを外す
+                     $this->addings()->detach($userId);
+                     return true;
+                 } else {
+                     //上記以外の場合は何もしない
+                     return false;
+                 }
+             }
+                 
+             /**
+              * 指定された$userIdのユーザをこのユーザがお気に入り追加しているか調べる。お気に入り追加していたらtrueを返す。
+              * 
+              * @param int $userId
+              * @return bool
+              */
+              public function is_adding($userId)
+              {
+                  //お気に入り追加しているユーザの中に$userIdのものが存在するか
+                  return $this->addings()->where('add_id',$userId)->exists();
+               }
+               
+              /**
+               * このユーザに関係するモデルの件数をロードする。
+               */
+               public function loadRelationshipCounts()
+               {
+                   $this->loadCount(['favorites','addings','added']);
+               }
 }

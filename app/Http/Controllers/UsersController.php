@@ -84,5 +84,47 @@ class UsersController extends Controller
              'users' => $followers,
          ]);
      } 
+     
+     /**
+     *お気に入り一覧へのリンク
+     */
+     public function addings($id)
+     {
+         //idの値でユーザを検索して取得
+         $user = User::findOrFail($id);
+         
+         //関係するモデルの件数をロード
+         $user->loadRelationshipCounts();
+         
+         //ユーザのお気に入り一覧を取得
+         $addings = $user->addings()->paginate(10);
+         
+         //お気に入り一覧ビューでそれらを表示
+         return view('users.addings',[
+             'user' =>$user,
+             'microposts' => $microposts,
+        ]);
+     }
+     
+     /**
+      * ユーザのお気に入り一覧ページを表示するアクション。
+      */
+      public function added($id)
+      {
+          //idの値でユーザを検索して取得
+          $user = User::findOrFail($id);
+          
+          //関係するモデルの件数をロード
+          $user->loadRelationshipCounts();
+          
+          //ユーザのお気に入り一覧を取得
+          $added=$user->added()->paginate(10);
+          
+          //お気に入り一覧ビューでそれらを表示
+          return view('users.added',[
+              'user' => $user,
+              'microposts' => $microposts,
+          ]);
+      }
     
 }
