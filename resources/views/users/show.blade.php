@@ -5,8 +5,6 @@
         <aside class="col-sm-4">
            {{--ユーザ情報--}}
            @include('users.card')
-           {{--お気に入り追加/お気に入り削除ボタン--}}
-           @include('favorites.favorites_button')
         </aside>
         <div class="col-sm-8">
             {{--タブ--}}
@@ -15,9 +13,9 @@
                 {{--投稿フォーム --}}
                 @include('microposts.form')
             @endif
-            {{--投稿一覧--}}
-            @include('microposts.microposts')
+             {{--投稿一覧--}}
+                @include('microposts.microposts')
+            
         </div>
-        
     </div>
 @endsection
